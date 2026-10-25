@@ -150,3 +150,13 @@ export function putBack(items: SuiteItems, nodeid: string): SuiteItems {
 export function unavailable(items: SuiteItems, tree: TreeModule[]): SelectionItem[] {
   return items.include.filter((item) => testsOf(item, tree).length === 0);
 }
+
+/** Cleans items added from elsewhere: no duplicates, nothing inside another item, complete groups collapsed. */
+export function normalizeItems(items: SuiteItems, tree: TreeModule[]): SuiteItems {
+  const unique = items.include.filter(
+    (item, index) => items.include.findIndex((other) => JSON.stringify(other) === JSON.stringify(item)) === index,
+  );
+  const outermost = unique.filter((item) => !unique.some((other) => other !== item && isWithin(item, other, tree)));
+  const added = new Set(unique.flatMap((item) => (item.kind === "test" ? [item.nodeid] : [])));
+  return { include: collapse(outermost, tree), exclude: items.exclude.filter((id) => !added.has(id)) };
+}

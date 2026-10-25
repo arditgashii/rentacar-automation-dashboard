@@ -28,7 +28,8 @@ export type BugReport = {
   commits: string;
 };
 
-const EXPECTED_GOT = /expected (.+?),\s*got (.+?)(?:[.;(]|$)/i;
+// "expected 89.99, got 89.0" -> 89.99 / 89.0; a dot ends the value only at the end of a sentence.
+const EXPECTED_GOT = /expected (.+?),\s*got (.+?)(?:[;(]|\.(?:\s|$)|$)/i;
 // Playwright locators and internals that mean nothing to a reader
 const TECHNICAL = /(get_by_test_id|locator\(|page\.|\[data-testid|Call log:|waiting for).*/gi;
 

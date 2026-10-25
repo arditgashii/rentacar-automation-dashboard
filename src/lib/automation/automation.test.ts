@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { buildBugReport } from "./bug-report";
 import { buildTree, label, resolveTests, summarize } from "./catalog";
 import { failureTypeOf } from "./failure";
 import { periodRange, validateCustom } from "./period";
@@ -149,5 +150,35 @@ describe("suite selection", () => {
   it("reports items the catalog no longer has", () => {
     const items: SuiteItems = { include: [{ kind: "file", file: "tests/gone/x/y/test_z.py" }], exclude: [] };
     expect(unavailable(items, tree)).toHaveLength(1);
+  });
+});
+
+describe("bug report", () => {
+  const base = {
+    testCaseId: "TC-005",
+    title: "Admin updates car details",
+    module: "fleet",
+    feature: "cars/update",
+    role: "admin",
+    failureType: "known_bug" as const,
+    steps: [
+      { title: "open the car", failed: false },
+      { title: "the saved car has the new values", failed: true },
+    ],
+    culprits: [],
+    knownBug: "BUG-001",
+  };
+
+  it("reads expected and actual values with decimals", () => {
+    const report = buildBugReport({ ...base, errorMessage: "saved car differs: daily_price: expected 89.99, got 89.0" });
+    expect(report.expected).toBe("89.99");
+    expect(report.actual).toBe("89.0");
+    expect(report.title).toContain('fails at "the saved car has the new values"');
+    expect(report.failureType).toBe("Known bug (BUG-001)");
+  });
+
+  it("keeps locators out of the readable text", () => {
+    const report = buildBugReport({ ...base, errorMessage: "Locator expected to be visible get_by_test_id('x') Call log: waiting" });
+    expect(report.actual).not.toMatch(/get_by_test_id|Call log/);
   });
 });

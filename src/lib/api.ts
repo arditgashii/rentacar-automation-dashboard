@@ -18,8 +18,8 @@ export function errorResponse(status: number, message: string): NextResponse {
  * with a generic message (details stay in the server log, never in the response).
  */
 export function route<Args extends unknown[]>(
-  handler: (...args: Args) => Promise<NextResponse>,
-): (...args: Args) => Promise<NextResponse> {
+  handler: (...args: Args) => Promise<Response>,
+): (...args: Args) => Promise<Response> {
   return async (...args: Args) => {
     try {
       return await handler(...args);

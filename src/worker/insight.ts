@@ -1,16 +1,12 @@
 // What the dashboard can say about a failure: since when it fails and which platform commits came in
 // since it last passed.
 
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
-
 import { and, desc, eq, inArray, lt } from "drizzle-orm";
 
+import { commitsBetween } from "@/lib/automation/git";
 import type { CulpritCommit } from "@/lib/automation/types";
 import { db, schema } from "@/lib/db";
-import { env } from "@/lib/env";
 
-const run = promisify(execFile);
 const FAILING = ["failed", "known_bug"];
 
 /** Earlier results of the same test, newest first. */
@@ -42,27 +38,4 @@ export async function analyseFailure(
   }
   const culprits = commit && lastPassCommit && lastPassCommit !== commit ? await commitsBetween(lastPassCommit, commit) : [];
   return { failingSince, culprits };
-}
-
-let fetchedAt = 0;
-
-/** Commits on the platform's main branch between two commits, newest first (at most 20). */
-async function commitsBetween(from: string, to: string): Promise<CulpritCommit[]> {
-  const git = (args: string[]) => run("git", ["-C", env.platformRepo, ...args], { timeout: 20_000, windowsHide: true });
-  try {
-    if (Date.now() - fetchedAt > 5 * 60_000) {
-      await git(["fetch", "-q", "origin", "main"]).catch(() => undefined);
-      fetchedAt = Date.now();
-    }
-    const { stdout } = await git(["log", "--max-count=20", "--format=%H%x1f%s%x1f%an%x1f%aI", `${from}..${to}`]);
-    return stdout
-      .split("\n")
-      .filter(Boolean)
-      .map((line) => {
-        const [sha, message, author, date] = line.split("\x1f");
-        return { sha, message, author, date, url: `${env.platformGithubUrl}/commit/${sha}` };
-      });
-  } catch {
-    return [];
-  }
 }
