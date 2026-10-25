@@ -29,7 +29,11 @@ export function AutomationHeader({
   const { openNewRun, now } = useAutomation();
   return (
     <>
-      {now && !now.workerAlive ? (
+      {now?.demo ? (
+        <p role="status" className="mb-4 rounded-md border border-run/25 bg-run-soft px-3 py-2 text-sm text-run">
+          Public demo with sample data. Starting runs, Teams and Members are switched off here; the README shows how to run everything locally.
+        </p>
+      ) : now && !now.workerAlive ? (
         <p role="status" className="mb-4 rounded-md border border-flaky/30 bg-flaky-soft px-3 py-2 text-sm text-flaky">
           The worker is not running, so queued runs and schedules wait. Start it with <code className="font-mono">npm run worker</code>.
         </p>

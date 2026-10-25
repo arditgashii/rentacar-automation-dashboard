@@ -4,7 +4,7 @@ import { z } from "zod";
 import { QueueError, enqueue } from "@/lib/automation/queue";
 import { appId, NodeIdSchema } from "@/lib/automation/validation";
 import { errorResponse, json, readBody, route } from "@/lib/api";
-import { requireApi } from "@/lib/auth/guards";
+import { assertNotDemo, requireApi } from "@/lib/auth/guards";
 import { db, schema } from "@/lib/db";
 
 const Body = z.strictObject({ nodeid: NodeIdSchema.optional() });
@@ -12,6 +12,7 @@ const Body = z.strictObject({ nodeid: NodeIdSchema.optional() });
 /** Runs the same tests again, or one test of the run. Never retries, like any Run now. */
 export const POST = route(async (request: Request, context: { params: Promise<{ runId: string }> }) => {
   const user = await requireApi("automation", "write");
+  assertNotDemo();
   const parsed = appId("run").safeParse((await context.params).runId);
   if (!parsed.success) return errorResponse(404, "Run not found.");
   const run = await db.query.runs.findFirst({ where: eq(schema.runs.id, parsed.data) });

@@ -5,12 +5,13 @@ import { resolveTarget } from "@/lib/automation/resolve";
 import { getSchedule } from "@/lib/automation/schedules-data";
 import { appId } from "@/lib/automation/validation";
 import { errorResponse, json, route } from "@/lib/api";
-import { requireApi } from "@/lib/auth/guards";
+import { assertNotDemo, requireApi } from "@/lib/auth/guards";
 import { db, schema } from "@/lib/db";
 
 /** Run now from the schedule menu: starts at once, without retries (only planned runs retry). */
 export const POST = route(async (_request: Request, context: { params: Promise<{ scheduleId: string }> }) => {
   const user = await requireApi("automation", "write");
+  assertNotDemo();
   const parsed = appId("sch").safeParse((await context.params).scheduleId);
   const schedule = parsed.success ? await getSchedule(db, parsed.data) : undefined;
   if (!schedule) return errorResponse(404, "Schedule not found.");

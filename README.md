@@ -150,6 +150,24 @@ database. Runs you start from the dashboard are real pytest runs and are stored 
 
 **Members** (Admin only): add with a temporary password, change role, set a new password, remove.
 
+## Public demo
+
+The web app runs on Vercel with a Postgres database on Neon, both in Frankfurt. With
+`DEMO_MODE=1` it shows the sample data and switches off what needs the local setup or could be
+misused by a visitor: starting runs (there is no worker or browser on Vercel), Teams, Members and
+file uploads. Test Plans and Manual Regression can be tried out.
+
+| Vercel variable | Value |
+|---|---|
+| `DATABASE_URL` | The pooled connection string from Neon |
+| `SESSION_SECRET` | A random string of at least 32 characters |
+| `SECURE_COOKIES` | `1` |
+| `DEMO_MODE` | `1` |
+
+The demo database is filled from a developer machine, because the seed reads the real test catalog
+and platform history: put `DATABASE_URL=...` for Neon in `.env.neon` (never committed) and run
+`npm run demo:reset`. Run it again now and then, so the sample history stays recent.
+
 ## Tests
 
 | Command | What |

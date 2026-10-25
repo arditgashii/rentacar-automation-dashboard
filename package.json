@@ -16,7 +16,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --env-file-if-exists=.env --import tsx scripts/migrate.ts",
     "seed": "node --env-file-if-exists=.env --import tsx scripts/seed.ts",
-    "teams:mock": "node --env-file-if-exists=.env --import tsx scripts/teams-mock.ts"
+    "teams:mock": "node --env-file-if-exists=.env --import tsx scripts/teams-mock.ts",
+    "demo:reset": "node --no-warnings --env-file-if-exists=.env --env-file=.env.neon --import tsx scripts/migrate.ts && node --no-warnings --env-file-if-exists=.env --env-file=.env.neon --import tsx scripts/seed.ts --reset"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.4.1",

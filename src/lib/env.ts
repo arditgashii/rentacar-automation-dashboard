@@ -27,4 +27,6 @@ export const env = {
   jiraProjectKey: process.env.JIRA_PROJECT_KEY ?? "DN",
   mediaRetentionDays: Number(process.env.MEDIA_RETENTION_DAYS ?? 14),
   secureCookies: process.env.SECURE_COOKIES === "1",
+  // The public demo: sample data, no worker, and nothing a visitor could misuse (see README).
+  demoMode: process.env.DEMO_MODE === "1",
 };

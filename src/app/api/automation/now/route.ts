@@ -5,6 +5,7 @@ import { readCatalog, readState, WORKER_STALE_MS } from "@/lib/automation/state"
 import { json, route } from "@/lib/api";
 import { requireApi } from "@/lib/auth/guards";
 import { db, schema } from "@/lib/db";
+import { env } from "@/lib/env";
 
 /** The "Now" panel: what runs, what waits, the next schedule and what needs attention. */
 export const GET = route(async () => {
@@ -43,5 +44,6 @@ export const GET = route(async () => {
     nextRun: next ? { id: next.id, name: next.name, at: next.nextRunAt!.toISOString() } : null,
     attention: { runId: lastFinished?.id ?? null, runNumber: lastFinished?.number ?? null, tests: attention },
     workerAlive: worker ? Date.now() - new Date(worker.at).getTime() < WORKER_STALE_MS : false,
+    demo: env.demoMode,
   });
 });

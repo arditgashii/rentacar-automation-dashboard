@@ -6,7 +6,7 @@ import { resolveTarget } from "@/lib/automation/resolve";
 import { listRuns } from "@/lib/automation/runs-data";
 import { NewRunSchema } from "@/lib/automation/validation";
 import { errorResponse, json, readBody, route } from "@/lib/api";
-import { requireApi } from "@/lib/auth/guards";
+import { assertNotDemo, requireApi } from "@/lib/auth/guards";
 import { db } from "@/lib/db";
 
 const Filters = z.object({
@@ -35,6 +35,7 @@ export const GET = route(async (request: Request) => {
 /** Run now: the run goes to the queue; the worker starts it when nothing else runs. */
 export const POST = route(async (request: Request) => {
   const user = await requireApi("automation", "write");
+  assertNotDemo();
   const body = await readBody(request, NewRunSchema);
   const resolved = await resolveTarget(db, body.target, body);
   if (!resolved) return errorResponse(404, "This suite does not exist any more.");

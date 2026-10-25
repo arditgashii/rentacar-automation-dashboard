@@ -13,6 +13,7 @@ export type NowData = {
   nextRun: { id: string; name: string; at: string } | null;
   attention: { runId: string | null; runNumber: number | null; tests: { nodeid: string; title: string; testCaseId: string | null }[] };
   workerAlive: boolean;
+  demo: boolean;
 };
 
 export type ScheduleForEdit = {

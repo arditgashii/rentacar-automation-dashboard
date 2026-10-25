@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { homeFor } from "@/lib/auth/permissions";
+import { env } from "@/lib/env";
 import { currentUser } from "@/lib/auth/session";
 import { LoginForm } from "./login-form";
 
@@ -28,7 +29,18 @@ export default async function LoginPage() {
             <LoginForm />
           </Suspense>
         </div>
-        <p className="mt-4 text-sm text-muted">No account or forgot the password? Ask an admin of the team.</p>
+        {env.demoMode ? (
+          <div className="mt-4 rounded-lg border border-line bg-surface p-4 text-sm" data-testid="demo-accounts">
+            <p className="font-medium text-ink">Public demo</p>
+            <p className="mt-1 text-muted">
+              Log in as <span className="font-mono text-ink">admin@qahub.test</span> (everything) or{" "}
+              <span className="font-mono text-ink">viewer@qahub.test</span> (read only), password{" "}
+              <span className="font-mono text-ink">{env.seedPassword}</span>. The data is a sample and is reset from time to time.
+            </p>
+          </div>
+        ) : (
+          <p className="mt-4 text-sm text-muted">No account or forgot the password? Ask an admin of the team.</p>
+        )}
       </div>
     </main>
   );

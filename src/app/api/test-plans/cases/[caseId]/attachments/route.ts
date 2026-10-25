@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { errorResponse, json, route } from "@/lib/api";
-import { requireApi } from "@/lib/auth/guards";
+import { assertNotDemo, requireApi } from "@/lib/auth/guards";
 import { db, schema } from "@/lib/db";
 import { newId } from "@/lib/ids";
 import { ATTACHMENT_TYPES, attachmentPath, attachmentsDir, MAX_ATTACHMENT_BYTES, safeFilename } from "@/lib/test-plans/attachments";
@@ -11,6 +11,7 @@ import { idFrom, liveCase } from "@/lib/test-plans/data";
 /** One or more files in the "files" field, at most 25 MB each. The test case must be saved already. */
 export const POST = route(async (request: Request, context: { params: Promise<{ caseId: string }> }) => {
   const user = await requireApi("testPlans", "write");
+  assertNotDemo();
   const current = await liveCase(await idFrom(context.params, "caseId", "tcs"));
   let form: FormData;
   try {
