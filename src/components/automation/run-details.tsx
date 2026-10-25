@@ -91,10 +91,10 @@ export function RunDetails({ runId }: { runId: string }) {
   }, [data, tab]);
 
   function setTab(next: Tab) {
-    const query = new URLSearchParams(params.toString());
+    const query = new URLSearchParams(window.location.search);
     if (next === "all") query.delete("tab");
     else query.set("tab", next);
-    router.replace(`${pathname}${query.size ? `?${query}` : ""}`, { scroll: false });
+    window.history.replaceState(null, "", `${pathname}${query.size ? `?${query}` : ""}`);
   }
 
   async function rerun() {

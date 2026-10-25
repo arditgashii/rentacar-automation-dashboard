@@ -117,6 +117,12 @@ function moduleOf(item: SelectionItem, tree: TreeModule[]): string | undefined {
 
 /** A readable name for a run of this selection, for example "Fleet / Cars / Create" or "3 areas". */
 export function selectionName(selection: SelectionItem[], tests: CatalogTest[]): string {
+  // Whole modules read as "All modules" or "Fleet, Bookings" instead of "3 areas".
+  const modules = selection.flatMap((item) => (item.kind === "module" ? [item.module] : []));
+  if (modules.length === selection.length && modules.length > 1) {
+    if (modules.length === new Set(tests.map((t) => t.module)).size) return "All modules";
+    if (modules.length === 2) return modules.map(label).join(", ");
+  }
   if (selection.length !== 1) return `${selection.length} areas`;
   const [item] = selection;
   switch (item.kind) {

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 import { toast } from "sonner";
 
@@ -20,7 +20,6 @@ import { ProgressBar, RunView } from "./run-view";
 type RunSummary = { id: string; name: string; status: "open" | "completed"; startedAt: string; completedAt: string | null; counts: Counts };
 
 export function RegressionView({ kind, canWrite }: { kind: RegressionKind; canWrite: boolean }) {
-  const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
   const team = (TEAMS as readonly string[]).includes(params.get("team") ?? "") ? params.get("team")! : TEAMS[0];
@@ -35,14 +34,14 @@ export function RegressionView({ kind, canWrite }: { kind: RegressionKind; canWr
 
   const go = useCallback(
     (patch: Record<string, string | null>) => {
-      const next = new URLSearchParams(params.toString());
+      const next = new URLSearchParams(window.location.search);
       for (const [key, value] of Object.entries(patch)) {
         if (value) next.set(key, value);
         else next.delete(key);
       }
-      router.push(`${pathname}?${next}`, { scroll: false });
+      window.history.pushState(null, "", `${pathname}?${next}`);
     },
-    [params, pathname, router],
+    [pathname],
   );
 
   async function add(name: string) {

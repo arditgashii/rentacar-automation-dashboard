@@ -164,6 +164,13 @@ export function CaseSheet({
         <RadixDialog.Overlay className="fixed inset-0 z-40 bg-ink/20" />
         <RadixDialog.Content
           aria-describedby={undefined}
+          // An existing test case opens with focus on the panel, not on its first button; a new one
+          // focuses the title (autoFocus below).
+          onOpenAutoFocus={(event) => {
+            if (!caseId) return;
+            event.preventDefault();
+            (event.currentTarget as HTMLElement).focus();
+          }}
           onEscapeKeyDown={(event) => {
             event.preventDefault();
             close();

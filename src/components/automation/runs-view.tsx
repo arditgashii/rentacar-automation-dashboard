@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,6 @@ const STARTED = [
 ];
 
 export function RunsView() {
-  const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
   const { version, openNewRun } = useAutomation();
@@ -34,14 +33,16 @@ export function RunsView() {
   const [q, setQ] = useState(get("q"));
 
   /** Every filter lives in the URL, so a filtered list can be shared and Back works. */
+  // Reads and writes the address bar directly (Next keeps useSearchParams in sync), so two quick
+  // changes cannot undo each other.
   function update(changes: Record<string, string>) {
-    const next = new URLSearchParams(params.toString());
+    const next = new URLSearchParams(window.location.search);
     for (const [key, value] of Object.entries(changes)) {
       if (value) next.set(key, value);
       else next.delete(key);
     }
     if (!("page" in changes)) next.delete("page");
-    router.replace(`${pathname}${next.size ? `?${next}` : ""}`, { scroll: false });
+    window.history.replaceState(null, "", `${pathname}${next.size ? `?${next}` : ""}`);
   }
 
   // The search box writes to the URL a moment after typing stops.

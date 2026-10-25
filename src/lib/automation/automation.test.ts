@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { buildBugReport } from "./bug-report";
-import { buildTree, label, resolveTests, summarize } from "./catalog";
+import { buildTree, label, resolveTests, selectionName, summarize } from "./catalog";
 import { failureTypeOf } from "./failure";
 import { periodRange, validateCustom } from "./period";
 import { describeRule, nextRunAt, slotAfter, validateRule } from "./schedule";
@@ -180,5 +180,15 @@ describe("bug report", () => {
   it("keeps locators out of the readable text", () => {
     const report = buildBugReport({ ...base, errorMessage: "Locator expected to be visible get_by_test_id('x') Call log: waiting" });
     expect(report.actual).not.toMatch(/get_by_test_id|Call log/);
+  });
+});
+
+describe("run names", () => {
+  it("names whole modules instead of counting areas", () => {
+    const modules = [...new Set(SAMPLE_TESTS.map((t) => t.module))];
+    expect(selectionName(modules.map((module) => ({ kind: "module" as const, module })), SAMPLE_TESTS)).toBe("All modules");
+    const withThird = [...SAMPLE_TESTS, { ...SAMPLE_TESTS[0], module: "bookings" }];
+    expect(selectionName(modules.slice(0, 2).map((module) => ({ kind: "module" as const, module })), withThird)).toBe(modules.slice(0, 2).map(label).join(", "));
+    expect(selectionName([{ kind: "module", module: modules[0] }], SAMPLE_TESTS)).toBe(label(modules[0]));
   });
 });

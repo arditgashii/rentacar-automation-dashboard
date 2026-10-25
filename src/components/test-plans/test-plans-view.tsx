@@ -2,7 +2,7 @@
 
 import * as RadixDialog from "@radix-ui/react-dialog";
 import { ArrowDown, ArrowUp, Download, FolderTree, Plus, Search, Trash2, Upload, X } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -50,7 +50,6 @@ function isTyping(target: EventTarget | null) {
 }
 
 export function TestPlansView() {
-  const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
   const data = useResource<Workspace>("/api/test-plans");
@@ -83,15 +82,15 @@ export function TestPlansView() {
 
   const setUrl = useCallback(
     (patch: Record<string, string | null>) => {
-      const next = new URLSearchParams(params.toString());
+      const next = new URLSearchParams(window.location.search);
       for (const [key, value] of Object.entries(patch)) {
         if (value) next.set(key, value);
         else next.delete(key);
       }
       const qs = next.toString();
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+      window.history.replaceState(null, "", qs ? `${pathname}?${qs}` : pathname);
     },
-    [params, pathname, router],
+    [pathname],
   );
 
   const select = (next: Scope) => {
