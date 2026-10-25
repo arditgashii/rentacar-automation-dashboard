@@ -11,6 +11,8 @@ marketplace. One place for the three kinds of testing a QA team does:
 - **Manual Regression** is the checklist for release checks, E2E passes and sprint testing, with
   results, comments, Jira links and a full history.
 
+**Live demo:** https://drivenow-qa-hub-delta.vercel.app (sample data; log in as `admin@qahub.test` / `QaHub!2026`). The platform it tests runs at https://drivenow-68x7.onrender.com.
+
 ![Automation overview](docs/screenshots/overview.png)
 
 ## Screenshots
