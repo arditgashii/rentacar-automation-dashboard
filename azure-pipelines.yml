@@ -1,0 +1,100 @@
+# The same checks as .github/workflows/ci.yml, for teams on Azure DevOps.
+trigger:
+  branches:
+    include: [main]
+pr:
+  branches:
+    include: [main]
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  DATABASE_URL: postgres://qahub:qahub-local@localhost:5433/qahub
+  # Only for this throwaway CI database and server; not a secret.
+  SESSION_SECRET: ci-only-session-secret-for-throwaway-runs
+  SEED_PASSWORD: QaHub!2026
+  QA_REPO_PATH: ../rentacar-qa-automation
+  PLATFORM_REPO_PATH: ../rentacar-platform
+  QA_PYTHON: python
+  APP_URL: http://localhost:3100
+  TEAMS_ALLOW_LOCAL_WEBHOOK: "1"
+  CI: "true"
+
+resources:
+  repositories:
+    - repository: qa
+      type: github
+      name: arditgashii/rentacar-qa-automation
+      endpoint: github
+    - repository: platform
+      type: github
+      name: arditgashii/rentacar-platform
+      endpoint: github
+  containers:
+    - container: postgres
+      image: postgres:16-alpine
+      env:
+        POSTGRES_USER: qahub
+        POSTGRES_PASSWORD: qahub-local
+        POSTGRES_DB: qahub
+      ports:
+        - 5433:5432
+
+stages:
+  - stage: quality
+    displayName: Lint, types, unit tests, build
+    jobs:
+      - job: quality
+        steps:
+          - checkout: self
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "22.x"
+          - script: npm ci
+          - script: npm run lint
+          - script: npm run typecheck
+          - script: npm test
+          - script: npm audit --omit=dev --audit-level=high
+          - script: npm run build
+
+  - stage: e2e
+    displayName: End-to-end (Playwright)
+    dependsOn: quality
+    jobs:
+      - job: e2e
+        services:
+          postgres: postgres
+        steps:
+          # Multiple checkouts land in $(Build.SourcesDirectory)/<repo name>, side by side.
+          - checkout: self
+            path: s/rentacar-automation-dashboard
+          - checkout: qa
+            path: s/rentacar-qa-automation
+          - checkout: platform
+            path: s/rentacar-platform
+            fetchDepth: 0
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.12"
+          - script: pip install -r requirements.txt
+            displayName: Install the QA suite (only to read its test catalog)
+            workingDirectory: $(Pipeline.Workspace)/s/rentacar-qa-automation
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "22.x"
+          - script: |
+              set -e
+              npm ci
+              npm run db:migrate
+              npm run seed
+              npm run build
+              npx playwright install --with-deps chromium
+              npm run e2e
+            displayName: Seed, build and run the Playwright tests
+            workingDirectory: $(Pipeline.Workspace)/s/rentacar-automation-dashboard
+          - task: PublishPipelineArtifact@1
+            condition: failed()
+            inputs:
+              targetPath: $(Pipeline.Workspace)/s/rentacar-automation-dashboard/playwright-report
+              artifact: playwright-report

@@ -6,7 +6,8 @@ import { currentUser } from "@/lib/auth/session";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser();
-  if (!user) redirect("/login");
+  // Without a session each page sends the visitor to the login with ?next= (the layout does not know the path).
+  if (!user) return children;
   if (!user.role) redirect("/no-access");
 
   return (
