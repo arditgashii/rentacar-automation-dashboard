@@ -1,10 +1,32 @@
-__pycache__/
-*.pyc
-.venv/
-venv/
-.env
-.pytest_cache/
+# dependencies
 node_modules/
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+*.tsbuildinfo
+
+# tests and reports
+/coverage
+/test-results/
+/playwright-report/
+/e2e/.auth/
+
+# run artifacts, uploads and local state written by the app
+/storage/
+
+# env files (.env.example is committed)
+.env
+.env.*
+!.env.example
+
+# editors and OS
 .idea/
 .vscode/
+.DS_Store
 *.log
+*.pem
+
+# written by next dev, not part of this project
+AGENTS.md
