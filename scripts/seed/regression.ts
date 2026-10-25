@@ -46,7 +46,7 @@ export async function seedRegression(users: { admin: string; editor: string }): 
   // The next release, half way through.
   const open = await createRun("before-release", "Fleet", "v1.5.0", users.editor, new Date(now - day));
   const openItems = await db.select().from(schema.regItems).where(eq(schema.regItems.runId, open));
-  for (const item of openItems.filter((i) => i.kind === "function").slice(0, 14)) {
+  for (const item of openItems.filter((i) => i.kind === "function").filter((i, index) => index < 13 || i.name === "Duplicate plate is refused")) {
     await db
       .update(schema.regItems)
       .set({ result: item.name === "Duplicate plate is refused" ? "failed" : "passed", comment: item.name === "Duplicate plate is refused" ? "Saved twice with a space in the plate, see DN-1301" : "", updatedBy: users.admin, updatedAt: new Date(now - day / 2) })
