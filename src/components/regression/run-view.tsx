@@ -701,7 +701,8 @@ function AddInline({ label, indent, canLibrary, onSubmit }: { label: string; ind
 type HistoryLine = { id: number; field: "result" | "comment" | "name" | "jira"; oldValue: string; newValue: string; by: string; at: string };
 
 function HistoryDialog({ item, onClose }: { item: Item; onClose: () => void }) {
-  const history = useResource<{ history: HistoryLine[] }>(`/api/regression/items/${item.id}/history`);
+  // Refreshed while open, so a change that is still saving shows up when it lands.
+  const history = useResource<{ history: HistoryLine[] }>(`/api/regression/items/${item.id}/history`, 2000);
   const describe = (line: HistoryLine) => {
     const value = (v: string) => (line.field === "result" ? RESULT_LABELS[v as Result] ?? v : v ? `"${v}"` : "empty");
     const what = { result: "the result", comment: "the comment", name: "the name", jira: "the Jira link" }[line.field];

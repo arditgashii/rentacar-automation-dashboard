@@ -34,10 +34,10 @@ jobs:
       run:
         working-directory: rentacar-automation-dashboard
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           path: rentacar-automation-dashboard
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -71,26 +71,26 @@ jobs:
       run:
         working-directory: rentacar-automation-dashboard
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           path: rentacar-automation-dashboard
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: arditgashii/rentacar-qa-automation
           path: rentacar-qa-automation
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: arditgashii/rentacar-platform
           path: rentacar-platform
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: rentacar-qa-automation/requirements.txt
       - name: Install the QA suite (only to read its test catalog)
         run: pip install -r ../rentacar-qa-automation/requirements.txt
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -101,7 +101,7 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: playwright-report
