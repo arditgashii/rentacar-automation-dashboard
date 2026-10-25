@@ -66,3 +66,31 @@ export function MoreButton({ label = "More actions", ...props }: React.ButtonHTM
     </Menu.Trigger>
   );
 }
+
+export const DropdownMenuSub = Menu.Sub;
+
+export function DropdownMenuSubTrigger({ className, ...props }: Menu.DropdownMenuSubTriggerProps) {
+  return (
+    <Menu.SubTrigger
+      className={cn(
+        "flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 outline-none select-none",
+        "data-[highlighted]:bg-hover data-[state=open]:bg-hover",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function DropdownMenuSubContent({ className, ...props }: Menu.DropdownMenuSubContentProps) {
+  return (
+    <Menu.Portal>
+      <Menu.SubContent
+        sideOffset={4}
+        collisionPadding={8}
+        className={cn("z-50 max-h-72 min-w-48 overflow-y-auto rounded-md border border-line bg-surface p-1 text-base shadow-[var(--shadow-pop)]", className)}
+        {...props}
+      />
+    </Menu.Portal>
+  );
+}
