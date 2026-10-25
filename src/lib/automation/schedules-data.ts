@@ -18,9 +18,13 @@ function describeItem(item: SelectionItem): string {
   return "One test";
 }
 
-export function describeTarget(target: RunTarget): string {
+/** "All modules", "Fleet", "Fleet, Bookings" or "4 areas": what a target runs, in a few words. */
+export function describeTarget(target: RunTarget, moduleCount: number): string {
   if (target.kind === "suite") return `Suite: ${target.suiteName}`;
-  return target.selection.length === 1 ? describeItem(target.selection[0]) : `${target.selection.length} areas`;
+  const { selection } = target;
+  if (moduleCount > 1 && selection.length === moduleCount && selection.every((item) => item.kind === "module")) return "All modules";
+  if (selection.length <= 2) return selection.map(describeItem).join(", ");
+  return `${selection.length} areas`;
 }
 
 /** The first slot of a new or edited schedule. */
@@ -59,7 +63,7 @@ export async function listSchedules(db: Db) {
       target: row.target.target,
       testSet: row.target.testSet,
       includeCostly: row.target.includeCostly,
-      whatRuns: `${describeTarget(target)} (${row.target.testSet === "smoke" ? "Smoke" : "Full"})`,
+      whatRuns: `${describeTarget(target, tree.length)} (${row.target.testSet === "smoke" ? "Smoke" : "Full"})`,
       repeat: row.repeat,
       days: row.days,
       time: row.time,

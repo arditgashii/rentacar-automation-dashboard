@@ -44,6 +44,8 @@ export function DialogContent({
         )}
         onEscapeKeyDown={onEscapeKeyDown}
         onInteractOutside={onInteractOutside}
+        // Without a description the dialog says so, instead of reading the title twice.
+        {...(description ? {} : { "aria-describedby": undefined })}
         {...props}
       >
         <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-4">
@@ -51,9 +53,7 @@ export function DialogContent({
             <RadixDialog.Title className="text-lg font-semibold text-ink">{title}</RadixDialog.Title>
             {description ? (
               <RadixDialog.Description className="mt-0.5 text-sm text-muted">{description}</RadixDialog.Description>
-            ) : (
-              <RadixDialog.Description className="sr-only">{typeof title === "string" ? title : ""}</RadixDialog.Description>
-            )}
+            ) : null}
           </div>
           <RadixDialog.Close
             className="-mt-1 -mr-2 rounded-md p-1.5 text-muted hover:bg-hover hover:text-ink"
