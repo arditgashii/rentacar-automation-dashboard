@@ -107,8 +107,8 @@ async function seedHistory(tests: CatalogTest[], schedules: { id: string; name: 
     const weekday = day.getDay() !== 0 && day.getDay() !== 6;
     if (weekday) plans.push({ when: at(daysAgo, 7, 0, now), name: weekdaySmoke.name, scheduleId: weekdaySmoke.id, testSet: "smoke", selection: ALL_MODULES(tests), scheduled: true });
     if (rng() < 0.4 && daysAgo > 0) {
-      const module = [...new Set(tests.map((t) => t.module))][Math.floor(rng() * 3) % 3];
-      plans.push({ when: at(daysAgo, 13 + Math.floor(rng() * 4), Math.floor(rng() * 60), now), name: module.charAt(0).toUpperCase() + module.slice(1), scheduleId: null, testSet: "full", selection: [{ kind: "module", module }], scheduled: false });
+      const area = [...new Set(tests.map((t) => t.module))][Math.floor(rng() * 3) % 3];
+      plans.push({ when: at(daysAgo, 13 + Math.floor(rng() * 4), Math.floor(rng() * 60), now), name: area.charAt(0).toUpperCase() + area.slice(1), scheduleId: null, testSet: "full", selection: [{ kind: "module", module: area }], scheduled: false });
     }
     if (daysAgo > 0) plans.push({ when: at(daysAgo, 22, 0, now), name: nightly.name, scheduleId: nightly.id, testSet: "full", selection: ALL_MODULES(tests), scheduled: true });
   }
