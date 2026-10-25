@@ -40,11 +40,13 @@ export function AutomationHeader({
         actions={
           <>
             {actions}
-            <Tooltip content="Settings">
-              <Link href="/automation-test/settings" aria-label="Settings" className={buttonClass({ icon: true })}>
-                <Settings className="size-4" />
-              </Link>
-            </Tooltip>
+            {tab === "settings" ? null : (
+              <Tooltip content="Settings">
+                <Link href="/automation-test/settings" aria-label="Settings" className={buttonClass({ icon: true })}>
+                  <Settings className="size-4" />
+                </Link>
+              </Tooltip>
+            )}
             <Button variant="primary" onClick={() => openNewRun()} data-testid="new-run">
               <Plus className="size-4" aria-hidden /> New run
             </Button>

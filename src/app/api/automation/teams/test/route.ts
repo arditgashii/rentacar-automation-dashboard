@@ -10,7 +10,7 @@ import { db, schema } from "@/lib/db";
 const Body = z.strictObject({ channelId: appId("chn") });
 
 export const POST = route(async (request: Request) => {
-  const user = await requireApi("automation", "write");
+  const user = await requireApi("settings", "write");
   const { channelId } = await readBody(request, Body);
   const channel = await db.query.teamsChannels.findFirst({ where: eq(schema.teamsChannels.id, channelId) });
   if (!channel) return errorResponse(404, "Channel not found.");

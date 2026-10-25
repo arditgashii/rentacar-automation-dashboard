@@ -111,3 +111,34 @@ export function isTeamsWebhook(value: string, allowLocal: boolean): boolean {
 export function maskWebhook(value: string): string {
   return `...${value.slice(-6)}`;
 }
+
+/** Example values for the live preview on the settings page. */
+export const SAMPLE_VALUES: Record<TemplateKind, Record<string, string>> = {
+  results: {
+    status: "Failed",
+    name: "Nightly regression",
+    total: "42",
+    passed: "37",
+    failed: "2",
+    flaky: "1",
+    knownBugs: "3",
+    skipped: "0",
+    duration: "6m 12s",
+    schedule: "Every weekday at 02:00",
+    commit: "a1b2c3d",
+    failedTests: "- Bookings / Create: test_create_booking_rejects_past_dates\n- Fleet / Search: test_search_by_category",
+    link: "http://localhost:3000/automation-test/runs/run_example01",
+  },
+  bug: {
+    title: "Updating a booking lowers the price",
+    testCase: "TC-005",
+    failureType: "Product bug",
+    description: "After changing the dates of a booking, the total price is lower than the daily rate times the days.",
+    steps: "1. Create a booking for 3 days\n2. Change the end date to add 1 day\n3. Read the total price",
+    expected: "total 240.00",
+    actual: "total 216.00",
+    commits: "- d4e5f6a Change how booking prices are rounded",
+    schedule: "Every weekday at 02:00",
+    link: "http://localhost:3000/automation-test/runs/run_example01",
+  },
+};

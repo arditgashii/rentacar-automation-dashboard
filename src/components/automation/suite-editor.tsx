@@ -3,7 +3,7 @@
 import { AlertTriangle, ChevronRight, Search, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { Button, buttonClass } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import type { RunCard as RunCardData } from "@/lib/automation/runs-data";
 import { putBack, stateOf, testsOf, toggle, unavailable } from "@/lib/automation/suite-selection";
 import type { CatalogTest, SelectionItem, SuiteItems } from "@/lib/automation/types";
 import { api, useResource } from "@/lib/client/api";
+import { useLeaveGuard } from "@/lib/client/leave-guard";
 import { cn } from "@/lib/cn";
 import { plural } from "@/lib/format";
 import { useAutomation } from "./context";
@@ -58,27 +59,8 @@ export function SuiteEditor({ suiteId }: { suiteId: string | null }) {
   const tree = useMemo(() => catalog.data?.tree ?? [], [catalog.data]);
   const allTests = useMemo(() => tree.flatMap((m) => m.features.flatMap((f) => f.files.flatMap((file) => file.tests))), [tree]);
 
-  // Leaving with unsaved changes asks first: the browser for reloads and closing, our dialog for links.
-  useEffect(() => {
-    if (!dirty) return;
-    const beforeUnload = (event: BeforeUnloadEvent) => event.preventDefault();
-    const onClick = (event: MouseEvent) => {
-      const anchor = (event.target as HTMLElement).closest("a");
-      if (!anchor || anchor.target === "_blank" || !anchor.href.startsWith(window.location.origin)) return;
-      event.preventDefault();
-      event.stopPropagation();
-      confirm.ask("Leave without saving?", "Your changes to this suite will be lost.", "Leave", () => {
-        setSaved(JSON.stringify(draft));
-        router.push(anchor.href.slice(window.location.origin.length));
-      });
-    };
-    window.addEventListener("beforeunload", beforeUnload);
-    document.addEventListener("click", onClick, true);
-    return () => {
-      window.removeEventListener("beforeunload", beforeUnload);
-      document.removeEventListener("click", onClick, true);
-    };
-  }, [dirty, draft, confirm, router]);
+  const dropChanges = useCallback(() => setSaved(JSON.stringify(draft)), [draft]);
+  useLeaveGuard(dirty, confirm, "Your changes to this suite will be lost.", dropChanges);
 
   if (existing.error) {
     return (
