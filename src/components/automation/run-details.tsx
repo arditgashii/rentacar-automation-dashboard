@@ -441,7 +441,7 @@ function EnvironmentCard({ report, commit, commitUrl }: { report: EnvironmentRep
             {warning}
           </p>
         ))}
-        <dl className="grid gap-x-4 gap-y-1.5 text-base sm:grid-cols-[160px_1fr]">
+        <dl className="grid grid-cols-1 gap-x-4 gap-y-1.5 text-base sm:grid-cols-[160px_1fr]">
           <dt className="text-muted">Platform</dt>
           <dd>
             {report.platformUrl} {report.reachable ? <span className="text-pass">answers</span> : <span className="text-fail">does not answer</span>}

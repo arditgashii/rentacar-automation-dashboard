@@ -83,7 +83,7 @@ export function RunsView() {
         ))}
       </div>
 
-      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_minmax(0,1.3fr)]">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_minmax(0,1.3fr)]">
         <Select aria-label="Module" value={get("module")} onChange={(e) => update({ module: e.target.value, feature: "" })}>
           <option value="">All modules</option>
           {modules.map((m) => (

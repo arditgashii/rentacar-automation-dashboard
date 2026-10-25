@@ -252,7 +252,7 @@ export function NewRunDialog({
               ]}
             />
             {what === "tests" ? (
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field label="Environment">
                   {(props) => (
                     <Select {...props} value="local" onChange={() => undefined}>
@@ -402,7 +402,7 @@ function ScheduleFields(props: {
       <Field label="Name" hint={`${props.name.length}/80`}>
         {(field) => <Input {...field} value={props.name} maxLength={80} onChange={(e) => props.setName(e.target.value)} placeholder="Nightly smoke" />}
       </Field>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Repeat">
           {(field) => (
             <Select {...field} value={props.repeat} onChange={(e) => props.setRepeat(e.target.value as Repeat)}>
@@ -447,7 +447,7 @@ function ScheduleFields(props: {
 
       <div className="mt-1 flex flex-col gap-3 rounded-md border border-line p-3">
         <p className="text-sm font-medium">Microsoft Teams</p>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Channel">
             {(field) => (
               <Select {...field} value={props.channelId} onChange={(e) => props.setChannelId(e.target.value)}>

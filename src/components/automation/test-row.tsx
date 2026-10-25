@@ -215,7 +215,7 @@ function TestDetails({
               <Copy className="size-3.5" aria-hidden /> Copy bug report
             </Button>
           </div>
-          <dl className="grid gap-x-4 gap-y-2 px-3 py-3 text-base sm:grid-cols-[120px_1fr]">
+          <dl className="grid grid-cols-1 gap-x-4 gap-y-2 px-3 py-3 text-base sm:grid-cols-[120px_1fr]">
             <dt className="text-muted">Title</dt>
             <dd>{report.title}</dd>
             <dt className="text-muted">Description</dt>

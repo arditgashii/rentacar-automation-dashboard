@@ -32,7 +32,7 @@ export const GET = route(async () => {
     ? await db
         .select({ nodeid: schema.runTests.nodeid, title: schema.runTests.title, testCaseId: schema.runTests.testCaseId })
         .from(schema.runTests)
-        .where(and(eq(schema.runTests.runId, lastFinished.id), eq(schema.runTests.outcome, "failed")))
+        .where(and(eq(schema.runTests.runId, lastFinished.id), inArray(schema.runTests.outcome, ["failed", "known_bug"])))
         .limit(5)
     : [];
 

@@ -13,6 +13,7 @@ function test(file: string, markers: string[] = [], id = ""): CatalogTest {
     testCaseId: id || null,
     title: parts[parts.length - 1],
     markers,
+    knownBug: null,
     line: 10,
   };
 }

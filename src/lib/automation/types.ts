@@ -10,6 +10,8 @@ export type CatalogTest = {
   testCaseId: string | null;
   title: string;
   markers: string[];
+  // The BUG id of a known_bug marker, for example BUG-001.
+  knownBug: string | null;
   line: number;
 };
 
