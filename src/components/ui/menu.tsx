@@ -52,13 +52,13 @@ export function DropdownMenuSeparator() {
 }
 
 /** The "more" button used at the end of rows and in page headers. */
-export function MoreButton({ label = "More actions", ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { label?: string }) {
+export function MoreButton({ label = "More actions", className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { label?: string }) {
   return (
     <Menu.Trigger asChild>
       <button
         type="button"
         aria-label={label}
-        className="inline-flex size-7 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-ink data-[state=open]:bg-hover"
+        className={cn("inline-flex size-7 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-ink data-[state=open]:bg-hover", className)}
         {...props}
       >
         <MoreHorizontal className="size-4" />
